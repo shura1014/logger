@@ -133,3 +133,87 @@ func TestLogger(t *testing.T) {
 	logger.Error("%s %s", "wendell", "25")
 }
 ```
+
+### 默认的LOG
+```go
+func TestDefaultLog(t *testing.T) {
+	todo := context.TODO()
+	Log.Debug(todo, "%s %s", "wendell", "25")
+	Log.Info(todo, "%s %s", "wendell", "25")
+	Log.Error(todo, "%s %s", "wendell", "25")
+}
+
+
+=== RUN   TestDefaultLog
+[DEFAULT] 2023-08-18 09:39:37 shura/logger/logger_test.go:60 DEBUG wendell 25
+[DEFAULT] 2023-08-18 09:39:37 shura/logger/logger_test.go:61 INFO wendell 25
+[DEFAULT] 2023-08-18 09:39:37 shura/logger/logger_test.go:62 ERROR  Error Cause by:
+wendell 25
+--- PASS: TestDefaultLog (0.00s)
+PASS
+```
+
+
+### 自定义日志输出格式
+实现接口
+```go
+type LoggingFormatter interface {
+	Formatter(param *LoggingFormatterParam) string
+	SetContentFormatStr(f string)
+	SetContents(contents []*Content)
+}
+
+logger.SetLogFormat(f)
+```
+
+### 自定义日志格式输出
+```go
+func TestContentHandlerLog(t *testing.T) {
+	todo := context.TODO()
+	Log.SetContentFormat(`{time:Y/M/D H:m:s::red}`)
+	Log.Debug(todo, "%s %s", "wendell", "25")
+	Log.Info(todo, "%s %s", "wendell", "25")
+	Log.Error(todo, "%s %s", "wendell", "25")
+}
+
+=== RUN   TestContentHandlerLog
+2023/08/18 09:47:05
+2023/08/18 09:47:05
+2023/08/18 09:47:05
+--- PASS: TestContentHandlerLog (0.00s)
+PASS
+```
+
+
+### 自定义内容处理
+
+```go
+// 定义内容处理函数
+var fun ContentFunc
+fun = func(msg ...any) any {
+    a := msg[0].(string)
+    return a + "::hello"
+}
+
+// 注册函数
+RegistryContentFunc("hello", fun)
+
+
+// 使用 
+Log.SetContentFormat(`{time:Y/M/D H:m:s::hello}`)
+Log.Debug(todo, "")
+Log.Info(todo, "")
+Log.Error(todo, "")
+
+
+// 结果
+=== RUN   TestContentHandlerLog
+2023/08/18 09:50:10::hello
+2023/08/18 09:50:10::hello
+2023/08/18 09:50:10::hello
+--- PASS: TestContentHandlerLog (0.00s)
+PASS
+```
+
+
+
