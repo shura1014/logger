@@ -2,7 +2,7 @@ package simple
 
 import (
 	"context"
-	"github.com/Fullstack1014/logger"
+	"github.com/shura1014/logger"
 	"os"
 )
 
