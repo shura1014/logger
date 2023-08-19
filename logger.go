@@ -52,7 +52,7 @@ func Default(prefix string) *Logger {
 
 	logger.Outs = append(logger.Outs, out)
 	logger.Level = DebugLevel
-	logger.logFormatter = DefaultFormat
+	logger.logFormatter = &TextFormatter{}
 	logger.SetContentFormat(DefaultContentFormat)
 	return logger
 }
